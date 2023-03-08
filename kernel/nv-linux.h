@@ -134,7 +134,10 @@
 #include <asm/tlbflush.h>           /* flush_tlb(), flush_tlb_all()     */
 #include <linux/cpu.h>              /* CPU hotplug support              */
 #endif
+  /* Obsolete header file as of kernel 5.11. */
+  #if LINUX_VERSION_CODE < KERNEL_VERSION(5, 11, 0)
 #include <asm/kmap_types.h>         /* page table entry lookup          */
+  #endif
 #endif
 
 #include <linux/pci.h>              /* pci_find_class, etc              */
@@ -152,7 +155,9 @@
 
 #if defined(NVCPU_X86_64) && !defined(KERNEL_2_4) && !defined(HAVE_COMPAT_IOCTL)
 #include <linux/syscalls.h>         /* sys_ioctl()                      */
+#if LINUX_VERSION_CODE < KERNEL_VERSION(5, 9, 0)
 #include <linux/ioctl32.h>          /* register_ioctl32_conversion()    */
+#endif
 #endif
 
 #if defined(NVCPU_X86_64) && defined(KERNEL_2_4)
@@ -717,12 +722,21 @@ extern nv_spinlock_t km_lock;
 #endif
 
 #if defined(NVCPU_X86) || defined(NVCPU_X86_64)
+	#if LINUX_VERSION_CODE >= KERNEL_VERSION(5, 8, 0)
+#define NV_VMALLOC(ptr, size, cached)                           \
+    {                                                                   \
+        pgprot_t __prot = (cached) ? PAGE_KERNEL : PAGE_KERNEL_NOCACHE; \
+        (ptr) = __vmalloc(size, GFP_KERNEL);                    \
+        VM_ALLOC_RECORD(ptr, size, "vm_vmalloc");                       \
+    }
+	#else
 #define NV_VMALLOC(ptr, size, cached)                                   \
     {                                                                   \
         pgprot_t __prot = (cached) ? PAGE_KERNEL : PAGE_KERNEL_NOCACHE; \
         (ptr) = __vmalloc(size, GFP_KERNEL, __prot);                    \
         VM_ALLOC_RECORD(ptr, size, "vm_vmalloc");                       \
     }
+	#endif
 #elif defined(NVCPU_ARM)
 #define NV_VMALLOC_CACHE(ptr, size)                                     \
     {                                                                   \
@@ -1979,17 +1993,28 @@ static inline NvU64 nv_node_end_pfn(int nid)
                                             pages, vmas, NULL);
 
         #else
-
+#if LINUX_VERSION_CODE >= KERNEL_VERSION(5, 9, 0)
+               return get_user_pages_remote(mm, start, nr_pages, flags,
+                                            pages, vmas, NULL);
+#else
                return get_user_pages_remote(tsk, mm, start, nr_pages, flags,
                                             pages, vmas);
-
+#endif
         #endif
 
         }
     #endif
 #else
+  /* Only kernels lower than 4.6 should make it past the last "else" above.
+   * Due to some 4.6 code being back-ported starting at 4.4.168,
+   * a distinction must now be made here. */
+  #if LINUX_VERSION_CODE >= KERNEL_VERSION(4, 4, 168)
+    #define NV_GET_USER_PAGES(start, nr_pages, write, force, pages, vmas) \
+        get_user_pages(current, current->mm, start, nr_pages, write, pages, vmas)
+  #else
     #define NV_GET_USER_PAGES(start, nr_pages, write, force, pages, vmas) \
         get_user_pages(current, current->mm, start, nr_pages, write, force, pages, vmas)
+  #endif
 
     #define NV_GET_USER_PAGES_REMOTE    get_user_pages
 #endif

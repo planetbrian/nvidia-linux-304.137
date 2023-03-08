@@ -21,8 +21,6 @@
 #include "patches.h"
 #include "rmil.h"
 
-#include <linux/version.h>
-
 static const char *__README_warning = \
     "The NVIDIA graphics driver tries to detect potential problems\n"
     "with the host system and warns about them using the system's\n"
@@ -125,8 +123,6 @@ static char nv_registry_keys[NV_MAX_REGISTRY_KEYS_LENGTH];
 
 #if defined(NV_PDE_DATA_PRESENT)
 # define NV_PDE_DATA(inode) PDE_DATA(inode)
-#elif (LINUX_VERSION_CODE >= KERNEL_VERSION(5, 17, 0))
-# define NV_PDE_DATA(inode) pde_data(inode)
 #else
 # define NV_PDE_DATA(inode) PDE(inode)->data
 #endif

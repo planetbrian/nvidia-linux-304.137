@@ -24,6 +24,7 @@
 
 #include "os-interface.h"
 #include "nv-linux.h"
+#include <linux/version.h>
 
 void NV_API_CALL os_disable_preemption(void)
 {
@@ -772,7 +773,12 @@ RM_STATUS NV_API_CALL os_delay(NvU32 MilliSeconds)
         // the requested timeout has expired, loop until less
         // than a jiffie of the desired delay remains.
         //
-        current->state = TASK_INTERRUPTIBLE;
+#if (LINUX_VERSION_CODE < KERNEL_VERSION(5, 14, 0))
+         current->state = TASK_INTERRUPTIBLE;
+#else
+        // Rel. commit "sched: Change task_struct::state" (Peter Zijlstra, Jun 11 2021)
+        WRITE_ONCE(current->__state, TASK_INTERRUPTIBLE);
+#endif
         do
         {
             schedule_timeout(jiffies);

@@ -13,13 +13,7 @@
 #define _NV_H_
 
 #include <nvtypes.h>
-/* Added the following to accomodate kernels 5.16+ */
-#include <linux/version.h>
-#if LINUX_VERSION_CODE < KERNEL_VERSION(5, 16, 0)
-  #include <stdarg.h>
-#else
-  #include <linux/stdarg.h> /* kernels 5.16+ */
-#endif
+#include <stdarg.h>
 
 #if !defined(NV_MIN)
 #define NV_MIN(_a,_b) ((_a) < (_b) ? (_a) : (_b))

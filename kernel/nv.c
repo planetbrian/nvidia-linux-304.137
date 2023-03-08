@@ -20,7 +20,11 @@
 #include <linux/version.h>
 
 #if defined(MODULE_LICENSE)
+#if LINUX_VERSION_CODE >= KERNEL_VERSION(5, 9, 0)
+MODULE_LICENSE("GPL");
+#else
 MODULE_LICENSE("NVIDIA");
+#endif
 #endif
 #if defined(MODULE_INFO)
 MODULE_INFO(supported, "external");
@@ -3327,7 +3331,11 @@ nv_kern_probe
 
 #if defined(CONFIG_VGA_ARB)
 #if defined(VGA_DEFAULT_DEVICE)
+#if LINUX_VERSION_CODE >= KERNEL_VERSION(5, 9, 0)
+    vga_get(VGA_DEFAULT_DEVICE, VGA_RSRC_LEGACY_MASK, 0);
+#else
     vga_tryget(VGA_DEFAULT_DEVICE, VGA_RSRC_LEGACY_MASK);
+#endif
 #endif
     vga_set_legacy_decoding(dev, VGA_RSRC_NONE);
 #endif

@@ -24,7 +24,12 @@
 *                                                                           *
 \***************************************************************************/
 
-#include <stdarg.h>
+#include <linux/version.h>
+#if LINUX_VERSION_CODE < KERNEL_VERSION(5, 16, 0)
+  #include <stdarg.h>
+#else
+  #include <linux/stdarg.h> /* kernels 5.16+ */
+#endif
 
 /*
  * Define away Microsoft compiler extensions when possible

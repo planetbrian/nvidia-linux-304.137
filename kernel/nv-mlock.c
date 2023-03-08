@@ -48,11 +48,19 @@ RM_STATUS NV_API_CALL nv_lock_user_pages(
         return rmStatus;
     }
 
+#if LINUX_VERSION_CODE >= KERNEL_VERSION(5, 8, 0)
+    down_read(&mm->mmap_lock);
+    ret = NV_GET_USER_PAGES((unsigned long)address,
+                            page_count, write, force, user_pages, NULL);
+    up_read(&mm->mmap_lock);
+    pinned = ret;
+#else
     down_read(&mm->mmap_sem);
     ret = NV_GET_USER_PAGES((unsigned long)address,
                             page_count, write, force, user_pages, NULL);
     up_read(&mm->mmap_sem);
     pinned = ret;
+#endif
 
     if (ret < 0)
     {

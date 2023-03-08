@@ -38,14 +38,22 @@ static inline void nv_disable_caches(unsigned long *cr4)
     wbinvd();
     *cr4 = NV_READ_CR4();
     if (*cr4 & 0x80) NV_WRITE_CR4(*cr4 & ~0x80);
+    #if LINUX_VERSION_CODE >= KERNEL_VERSION(5, 8, 0)
+    __flush_tlb_local();
+    #else
     __flush_tlb();
+    #endif
 }
 
 static inline void nv_enable_caches(unsigned long cr4)
 {
     unsigned long cr0 = read_cr0();
     wbinvd();
+    #if LINUX_VERSION_CODE >= KERNEL_VERSION(5, 8, 0)
+    __flush_tlb_local();
+    #else
     __flush_tlb();
+    #endif
     write_cr0((cr0 & 0x9fffffff));
     if (cr4 & 0x80) NV_WRITE_CR4(cr4);
 }

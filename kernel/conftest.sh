@@ -109,8 +109,10 @@ test_headers() {
     FILES="$FILES linux/sched/task.h"
     FILES="$FILES xen/ioemu.h"
     FILES="$FILES linux/fence.h"
+    FILES="$FILES asm/tlbflush.h"
 
     FILES_ARCH="$FILES_ARCH asm/set_memory.h"
+    FILES_ARCH="$FILES_ARCH asm/pgtable.h"
 
     translate_and_find_header_files $HEADERS      $FILES
     translate_and_find_header_files $HEADERS_ARCH $FILES_ARCH
@@ -359,6 +361,9 @@ compile_test() {
             # Determine if the set_memory_array_uc() function is present.
             #
             CODE="
+            #if defined(NV_ASM_PGTABLE_H_PRESENT)
+            #include <asm/pgtable.h>
+            #endif
             #if defined(NV_ASM_SET_MEMORY_H_PRESENT)
             #include <asm/set_memory.h>
             #else
@@ -877,6 +882,21 @@ compile_test() {
             fi
         ;;
 
+        kmem_cache_create_usercopy)
+            #
+            # Determine if the kmem_cache_create_usercopy function exists.
+            #
+            # This function was added by:
+            #   2017-06-10  8eb8284b412906181357c2b0110d879d5af95e52
+            CODE="
+            #include <linux/slab.h>
+            void kmem_cache_create_usercopy(void) {
+                kmem_cache_create_usercopy();
+            }"
+
+            compile_check_conftest "$CODE" "NV_KMEM_CACHE_CREATE_USERCOPY_PRESENT" "" "functions"
+        ;;
+
         smp_call_function)
             #
             # Determine if the smp_call_function() function is
@@ -1167,6 +1187,22 @@ compile_test() {
             compile_check_conftest "$CODE" "NV_IOREMAP_NOCACHE_PRESENT" "" "functions"
         ;;
 
+        ioremap_nocache)
+            #
+            # Determine if the ioremap_nocache() function is present.
+            #
+            # Removed by commit 4bdc0d676a64 ("remove ioremap_nocache and
+            # devm_ioremap_nocache") in v5.6 (2020-01-06)
+            #
+            CODE="
+            #include <asm/io.h>
+            void conftest_ioremap_nocache(void) {
+                ioremap_nocache();
+            }"
+
+            compile_check_conftest "$CODE" "NV_IOREMAP_NOCACHE_PRESENT" "" "functions"
+        ;;
+
         ioremap_wc)
             #
             # Determine if the ioremap_wc() function is present.
@@ -1373,6 +1409,16 @@ compile_test() {
             }"
 
             compile_check_conftest "$CODE" "NV_FILE_OPERATIONS_HAS_COMPAT_IOCTL" "" "types"
+        ;;
+
+        proc_ops)
+            CODE="
+            #include <linux/proc_fs.h>
+            int conftest_proc_ops(void) {
+                return offsetof(struct proc_ops, proc_open);
+            }"
+
+            compile_check_conftest "$CODE" "NV_HAVE_PROC_OPS" "" "types"
         ;;
 
         proc_ops)
