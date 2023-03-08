@@ -69,6 +69,19 @@ static char nv_registry_keys[NV_MAX_REGISTRY_KEYS_LENGTH];
     })
 #endif
 
+#if defined(NV_HAVE_PROC_OPS)
+#define NV_CREATE_PROC_FILE(filename,parent,__name,__data)               \
+   ({                                                                    \
+        struct proc_dir_entry *__entry;                                  \
+        int __mode = (S_IFREG | S_IRUGO);                                \
+        const struct proc_ops *fops = &nv_procfs_##__name##_fops;        \
+        if (fops->proc_write != 0)                                       \
+            __mode |= S_IWUSR;                                           \
+        __entry = proc_create_data(filename, __mode, parent, fops,       \
+            __data);                                                     \
+        __entry;                                                         \
+    })
+#else
 #define NV_CREATE_PROC_FILE(filename,parent,__name,__data)               \
    ({                                                                    \
         struct proc_dir_entry *__entry;                                  \
@@ -80,6 +93,7 @@ static char nv_registry_keys[NV_MAX_REGISTRY_KEYS_LENGTH];
             __data);                                                     \
         __entry;                                                         \
     })
+#endif
 
 /*
  * proc_mkdir_mode exists in Linux 2.6.9, but isn't exported until Linux 3.0.
@@ -113,6 +127,24 @@ static char nv_registry_keys[NV_MAX_REGISTRY_KEYS_LENGTH];
 # define NV_PDE_DATA(inode) PDE(inode)->data
 #endif
 
+#if defined(NV_HAVE_PROC_OPS)
+#define NV_DEFINE_PROCFS_SINGLE_FILE(__name)                                  \
+    static int nv_procfs_open_##__name(                                       \
+        struct inode *inode,                                                  \
+        struct file *filep                                                    \
+    )                                                                         \
+    {                                                                         \
+        return single_open(filep, nv_procfs_read_##__name,                    \
+            NV_PDE_DATA(inode));                                              \
+    }                                                                         \
+                                                                              \
+    static const struct proc_ops nv_procfs_##__name##_fops = {                \
+        .proc_open       = nv_procfs_open_##__name,                           \
+        .proc_read       = seq_read,                                          \
+        .proc_lseek      = seq_lseek,                                         \
+        .proc_release    = single_release,                                    \
+    };
+#else
 #define NV_DEFINE_PROCFS_SINGLE_FILE(__name)                                  \
     static int nv_procfs_open_##__name(                                       \
         struct inode *inode,                                                  \
@@ -130,6 +162,7 @@ static char nv_registry_keys[NV_MAX_REGISTRY_KEYS_LENGTH];
         .llseek     = seq_lseek,                                              \
         .release    = single_release,                                         \
     };
+#endif
 
 static int nv_procfs_read_registry(struct seq_file *s, void *v);
 
@@ -660,6 +693,15 @@ done:
     return ((status < 0) ? status : (int)count);
 }
 
+#if defined(NV_HAVE_PROC_OPS)
+static struct proc_ops nv_procfs_registry_fops = {
+    .proc_open    = nv_procfs_open_registry,
+    .proc_read    = seq_read,
+    .proc_write   = nv_procfs_write_registry,
+    .proc_lseek   = seq_lseek,
+    .proc_release = nv_procfs_close_registry,
+};
+#else
 static struct file_operations nv_procfs_registry_fops = {
     .owner   = THIS_MODULE,
     .open    = nv_procfs_open_registry,
@@ -668,6 +710,7 @@ static struct file_operations nv_procfs_registry_fops = {
     .llseek  = seq_lseek,
     .release = nv_procfs_close_registry,
 };
+#endif
 
 static int
 nv_procfs_read_text_file(

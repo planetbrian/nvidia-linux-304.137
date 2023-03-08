@@ -17,6 +17,8 @@
 #include "rmil.h"
 #include "nv-pat.h"
 
+#include <linux/version.h>
+
 #if defined(MODULE_LICENSE)
 MODULE_LICENSE("NVIDIA");
 #endif
@@ -301,7 +303,11 @@ irqreturn_t   nv_kern_isr(int, void *, struct pt_regs *);
 #else
 irqreturn_t   nv_kern_isr(int, void *);
 #endif
+#if LINUX_VERSION_CODE < KERNEL_VERSION(4, 15, 0)
 void          nv_kern_rc_timer(unsigned long);
+#else
+void          nv_kern_rc_timer(struct timer_list *);
+#endif
 #if defined(NV_PM_SUPPORT_OLD_STYLE_APM)
 static int    nv_kern_apm_event(struct pm_dev *, pm_request_t, void *);
 #endif
@@ -868,7 +874,11 @@ static int __init nvidia_init_module(void)
     NV_SPIN_LOCK_INIT(&km_lock);
 #endif
 
+#if LINUX_VERSION_CODE < KERNEL_VERSION(4, 16, 0)
     NV_KMEM_CACHE_CREATE(nv_stack_t_cache, "nv_stack_t", nv_stack_t);
+#else
+    NV_KMEM_CACHE_CREATE_USERCOPY(nv_stack_t_cache, "nv_stack_t", nv_stack_t);
+#endif
     if (nv_stack_t_cache == NULL)
     {
         nv_printf(NV_DBG_ERRORS, "NVRM: stack cache allocation failed!\n");
@@ -2075,10 +2085,18 @@ void nv_kern_isr_bh(
 }
 
 void nv_kern_rc_timer(
+#if LINUX_VERSION_CODE < KERNEL_VERSION(4, 15, 0)
     unsigned long data
+#else
+    struct timer_list *t_list
+#endif
 )
 {
+#if LINUX_VERSION_CODE < KERNEL_VERSION(4, 15, 0)
     nv_linux_state_t *nvl = (nv_linux_state_t *) data;
+#else
+    nv_linux_state_t *nvl = from_timer(nvl, t_list, rc_timer);
+#endif
     nv_state_t *nv = NV_STATE_PTR(nvl);
 
     NV_CHECK_PCI_CONFIG_SPACE(nvl->timer_sp, nv, TRUE, TRUE, FALSE);
@@ -3029,9 +3047,13 @@ int NV_API_CALL nv_start_rc_timer(
         return -1;
 
     nv_printf(NV_DBG_INFO, "NVRM: initializing rc timer\n");
+#if LINUX_VERSION_CODE < KERNEL_VERSION(4, 15, 0)
     init_timer(&nvl->rc_timer);
     nvl->rc_timer.function = nv_kern_rc_timer;
     nvl->rc_timer.data = (unsigned long) nv;
+#else
+    timer_setup(&nvl->rc_timer, nv_kern_rc_timer, 0);
+#endif
     nv->rc_timer_enabled = 1;
     mod_timer(&nvl->rc_timer, jiffies + HZ); /* set our timeout for 1 second */
     nv_printf(NV_DBG_INFO, "NVRM: rc timer initialized\n");

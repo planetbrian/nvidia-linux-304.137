@@ -1151,6 +1151,22 @@ compile_test() {
             compile_check_conftest "$CODE" "NV_IOREMAP_CACHE_PRESENT" "" "functions"
         ;;
 
+        ioremap_nocache)
+            #
+            # Determine if the ioremap_nocache() function is present.
+            #
+            # Removed by commit 4bdc0d676a64 ("remove ioremap_nocache and
+            # devm_ioremap_nocache") in v5.6 (2020-01-06)
+            #
+            CODE="
+            #include <asm/io.h>
+            void conftest_ioremap_nocache(void) {
+                ioremap_nocache();
+            }"
+
+            compile_check_conftest "$CODE" "NV_IOREMAP_NOCACHE_PRESENT" "" "functions"
+        ;;
+
         ioremap_wc)
             #
             # Determine if the ioremap_wc() function is present.
@@ -1359,6 +1375,16 @@ compile_test() {
             compile_check_conftest "$CODE" "NV_FILE_OPERATIONS_HAS_COMPAT_IOCTL" "" "types"
         ;;
 
+        proc_ops)
+            CODE="
+            #include <linux/proc_fs.h>
+            int conftest_proc_ops(void) {
+                return offsetof(struct proc_ops, proc_open);
+            }"
+
+            compile_check_conftest "$CODE" "NV_HAVE_PROC_OPS" "" "types"
+        ;;
+
         sg_init_table)
             #
             # Determine if the sg_init_table() function is present.
@@ -1493,6 +1519,9 @@ compile_test() {
             CODE="
             #if defined(NV_DRM_DRMP_H_PRESENT)
             #include <drm/drmP.h>
+            #else
+            #include <drm/drm_drv.h>
+            #include <drm/drm_prime.h>
             #endif
             #if !defined(CONFIG_DRM) && !defined(CONFIG_DRM_MODULE)
             #error DRM not enabled
@@ -1940,6 +1969,8 @@ compile_test() {
             CODE="
             #if defined(NV_DRM_DRMP_H_PRESENT)
             #include <drm/drmP.h>
+            #else
+            #include <drm/drm_drv.h>
             #endif
             void conftest_drm_pci_set_busid(void) {
                 drm_pci_set_busid();
@@ -2098,8 +2129,11 @@ compile_test() {
             #   2017-01-06  11b3c20bdd15d17382068be569740de1dccb173d
             #
             CODE="
+            #if defined(NV_DRM_DRMP_H_PRESENT)
             #include <drm/drmP.h>
-
+            #else
+            #include <drm/drm_drv.h>
+            #endif
             int conftest_drm_driver_unload_has_int_return_type(struct drm_driver *drv) {
                 return drv->unload(NULL /* dev */);
             }"

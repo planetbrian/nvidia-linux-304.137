@@ -165,6 +165,7 @@ COMPILE_TESTS = \
 	vmm_support \
 	acpi_evaluate_integer \
 	ioremap_cache \
+	ioremap_nocache \
 	ioremap_wc \
 	proc_dir_entry \
 	INIT_WORK \
@@ -174,6 +175,7 @@ COMPILE_TESTS = \
 	pci_domain_nr \
 	pci_dma_mapping_error \
 	file_operations \
+	proc_ops \
 	sg_init_table \
 	pci_get_domain_bus_and_slot \
 	get_num_physpages \
@@ -231,7 +233,7 @@ ifndef NV_VERBOSE
 endif
 
 KBUILD_PARAMS += KBUILD_VERBOSE=$(NV_VERBOSE)
-KBUILD_PARAMS += -C $(KERNEL_SOURCES) SUBDIRS=$(PWD)
+KBUILD_PARAMS += -C $(KERNEL_SOURCES) M=$(PWD)
 KBUILD_PARAMS += ARCH=$(ARCH)
 
 #

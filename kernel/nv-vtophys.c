@@ -81,10 +81,20 @@ NvU64 NV_API_CALL nv_get_kern_phys_address(NvU64 address)
 #endif
 
     /* direct-mapped kernel address */
+#if LINUX_VERSION_CODE < KERNEL_VERSION(4, 12, 0)
     if ((address > PAGE_OFFSET) && (address < VMALLOC_START))
+#else
+    if (virt_addr_valid(address))
+#endif
         return __pa(address);
 
+#if LINUX_VERSION_CODE < KERNEL_VERSION(4, 12, 0)
     return nv_get_phys_address(address, TRUE);
+#else
+    nv_printf(NV_DBG_ERRORS,
+        "NVRM: can't translate address in %s()!\n", __FUNCTION__);
+    return 0;
+#endif
 }
 
 NvU64 NV_API_CALL nv_get_user_address(NvU64 address)

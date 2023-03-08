@@ -662,12 +662,12 @@ RM_STATUS NV_API_CALL os_get_current_time(
     NvU32 *useconds
 )
 {
-    struct timeval tm;
+    struct timespec64 tm;
 
-    do_gettimeofday(&tm);
+    ktime_get_real_ts64(&tm);
 
     *seconds = tm.tv_sec;
-    *useconds = tm.tv_usec;
+    *useconds = tm.tv_nsec / NSEC_PER_USEC;
 
     return RM_OK;
 }
@@ -697,9 +697,9 @@ RM_STATUS NV_API_CALL os_delay_us(NvU32 MicroSeconds)
     unsigned long usec;
 
 #ifdef NV_CHECK_DELAY_ACCURACY
-    struct timeval tm1, tm2;
+    struct timespec64 tm1, tm2;
 
-    do_gettimeofday(&tm1);
+    ktime_get_real_ts64(&tm1);
 #endif
 
     if (in_irq() && (MicroSeconds > NV_MAX_ISR_DELAY_US))
@@ -714,9 +714,9 @@ RM_STATUS NV_API_CALL os_delay_us(NvU32 MicroSeconds)
         udelay(usec);
 
 #ifdef NV_CHECK_DELAY_ACCURACY
-    do_gettimeofday(&tm2);
+    ktime_get_real_ts64(&tm2);
     nv_printf(NV_DBG_ERRORS, "NVRM: osDelayUs %d: 0x%x 0x%x\n",
-        MicroSeconds, tm2.tv_sec - tm1.tv_sec, tm2.tv_usec - tm1.tv_usec);
+        MicroSeconds, tm2.tv_sec - tm1.tv_sec, tm2.tv_nsec - tm1.tv_nsec);
 #endif
 
     return RM_OK;
@@ -737,12 +737,12 @@ RM_STATUS NV_API_CALL os_delay(NvU32 MilliSeconds)
     unsigned long MicroSeconds;
     unsigned long jiffies;
     unsigned long mdelay_safe_msec;
-    struct timeval tm_end, tm_aux;
+    struct timespec64 tm_end, tm_aux;
 #ifdef NV_CHECK_DELAY_ACCURACY
-    struct timeval tm_start;
+    struct timespec64 tm_start;
 #endif
 
-    do_gettimeofday(&tm_aux);
+    ktime_get_real_ts64(&tm_aux);
 #ifdef NV_CHECK_DELAY_ACCURACY
     tm_start = tm_aux;
 #endif
@@ -757,7 +757,7 @@ RM_STATUS NV_API_CALL os_delay(NvU32 MilliSeconds)
     }
 
     MicroSeconds = MilliSeconds * 1000;
-    tm_end.tv_usec = MicroSeconds;
+    tm_end.tv_nsec = MicroSeconds * NSEC_PER_USEC;
     tm_end.tv_sec = 0;
     NV_TIMERADD(&tm_aux, &tm_end, &tm_end);
 
@@ -776,11 +776,11 @@ RM_STATUS NV_API_CALL os_delay(NvU32 MilliSeconds)
         do
         {
             schedule_timeout(jiffies);
-            do_gettimeofday(&tm_aux);
+            ktime_get_real_ts64(&tm_aux);
             if (NV_TIMERCMP(&tm_aux, &tm_end, <))
             {
                 NV_TIMERSUB(&tm_end, &tm_aux, &tm_aux);
-                MicroSeconds = tm_aux.tv_usec + tm_aux.tv_sec * 1000000;
+                MicroSeconds = tm_aux.tv_nsec / NSEC_PER_USEC + tm_aux.tv_sec * USEC_PER_SEC;
             }
             else
                 MicroSeconds = 0;
@@ -798,10 +798,10 @@ RM_STATUS NV_API_CALL os_delay(NvU32 MilliSeconds)
         udelay(MicroSeconds);
     }
 #ifdef NV_CHECK_DELAY_ACCURACY
-    do_gettimeofday(&tm_aux);
+    ktime_get_real_ts64(&tm_aux);
     timersub(&tm_aux, &tm_start, &tm_aux);
-    nv_printf(NV_DBG_ERRORS, "NVRM: osDelay %dmsec: %d.%06dsec\n",
-        MilliSeconds, tm_aux.tv_sec, tm_aux.tv_usec);
+    nv_printf(NV_DBG_ERRORS, "NVRM: osDelay %dmsec: %d.%09dsec\n",
+        MilliSeconds, tm_aux.tv_sec, tm_aux.tv_nsec);
 #endif
 
     return RM_OK;

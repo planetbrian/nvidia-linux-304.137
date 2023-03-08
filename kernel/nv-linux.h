@@ -275,6 +275,10 @@ RM_STATUS nvos_forward_error_to_cray(struct pci_dev *, NvU32,
 #include <linux/seq_file.h>
 #endif
 
+#if LINUX_VERSION_CODE >= KERNEL_VERSION(4,3,0)
+#undef CONFIG_MTRR
+#endif
+
 #if !defined(NV_VMWARE) && defined(CONFIG_MTRR)
 #include <asm/mtrr.h>
 #endif
@@ -768,11 +772,15 @@ extern nv_spinlock_t km_lock;
         VM_ALLOC_RECORD(ptr, size, "vm_ioremap"); \
     }
 
+#if defined(NV_IOREMAP_NOCACHE_PRESENT)
 #define NV_IOREMAP_NOCACHE(ptr, physaddr, size) \
     { \
         (ptr) = ioremap_nocache(physaddr, size); \
         VM_ALLOC_RECORD(ptr, size, "vm_ioremap_nocache"); \
     }
+#else
+#define NV_IOREMAP_NOCACHE NV_IOREMAP
+#endif
 
 #if defined(NV_IOREMAP_CACHE_PRESENT)
 #define NV_IOREMAP_CACHE(ptr, physaddr, size)            \
@@ -840,11 +848,21 @@ extern nv_spinlock_t km_lock;
         kmem_cache = kmem_cache_create(name, sizeof(type),      \
                         0, 0, NULL, NULL);                      \
     }
+#define NV_KMEM_CACHE_CREATE_USERCOPY(kmem_cache, name, type)            \
+    {                                                                    \
+        kmem_cache = kmem_cache_create_usercopy(name, sizeof(type),      \
+                        0, 0, 0, sizeof(type), NULL, NULL);              \
+    }
 #elif (NV_KMEM_CACHE_CREATE_ARGUMENT_COUNT == 5)
 #define NV_KMEM_CACHE_CREATE(kmem_cache, name, type)            \
     {                                                           \
         kmem_cache = kmem_cache_create(name, sizeof(type),      \
                         0, 0, NULL);                            \
+    }
+#define NV_KMEM_CACHE_CREATE_USERCOPY(kmem_cache, name, type)            \
+    {                                                                    \
+        kmem_cache = kmem_cache_create_usercopy(name, sizeof(type),      \
+                        0, 0, 0, sizeof(type), NULL);                    \
     }
 #else
 #error "NV_KMEM_CACHE_CREATE_ARGUMENT_COUNT value unrecognized!"
@@ -977,11 +995,20 @@ extern void *nv_stack_t_cache;
         __ret;                                               \
      })
 #elif (NV_SMP_CALL_FUNCTION_ARGUMENT_COUNT == 3)
+#if LINUX_VERSION_CODE < KERNEL_VERSION(5, 3, 0)
 #define NV_SMP_CALL_FUNCTION(func, info, wait)               \
     ({                                                       \
         int __ret = smp_call_function(func, info, wait);     \
         __ret;                                               \
      })
+#else
+#define NV_SMP_CALL_FUNCTION(func, info, wait)               \
+    ({                                                       \
+        int __ret = 0;                                       \
+        smp_call_function(func, info, wait);                 \
+        __ret;                                               \
+     })
+#endif
 #else
 #error "NV_SMP_CALL_FUNCTION_ARGUMENT_COUNT value unrecognized!"
 #endif
@@ -997,11 +1024,20 @@ extern void *nv_stack_t_cache;
         __ret;                                         \
      })
 #elif (NV_ON_EACH_CPU_ARGUMENT_COUNT == 3)
+#if LINUX_VERSION_CODE < KERNEL_VERSION(5, 3, 0)
 #define NV_ON_EACH_CPU(func, info, wait)               \
     ({                                                 \
         int __ret = on_each_cpu(func, info, wait);     \
         __ret;                                         \
      })
+#else
+#define NV_ON_EACH_CPU(func, info, wait)               \
+    ({                                                 \
+        int __ret = 0;                                 \
+        on_each_cpu(func, info, wait);                 \
+        __ret;                                         \
+    })
+#endif
 #else
 #error "NV_ON_EACH_CPU_ARGUMENT_COUNT value unrecognized!"
 #endif
@@ -1371,6 +1407,7 @@ typedef void irqreturn_t;
 
 #define NV_PAGE_MASK    (NvU64)(long)PAGE_MASK
 
+#if LINUX_VERSION_CODE < KERNEL_VERSION(4, 12, 0)
 #define NV_PGD_OFFSET(address, kernel, mm)              \
    ({                                                   \
         struct mm_struct *__mm = (mm);                  \
@@ -1381,6 +1418,18 @@ typedef void irqreturn_t;
             __pgd = pgd_offset_k(address);              \
         __pgd;                                          \
     })
+#else
+#define NV_PGD_OFFSET(address, kernel, mm)              \
+   ({                                                   \
+        struct mm_struct *__mm = (mm);                  \
+        pgd_t *__pgd;                                   \
+        if (!kernel)                                    \
+            __pgd = pgd_offset(__mm, address);          \
+        else                                            \
+            __pgd = NULL;                               \
+        __pgd;                                          \
+    })
+#endif
 
 #define NV_PGD_PRESENT(pgd)                             \
    ({                                                   \
@@ -1398,7 +1447,23 @@ typedef void irqreturn_t;
    })
 #define NV_PMD_UNMAP(pmd) pmd_unmap(pmd);
 #else
-#if defined(PUD_SHIFT) /* 4-level pgtable */
+#if defined(P4D_SHIFT) /* 5-level pgtable */
+#define NV_PMD_OFFSET(address, pgd)                     \
+   ({                                                   \
+        pmd_t *__pmd = NULL;                            \
+        pud_t *__pud;                                   \
+        p4d_t *__p4d;                                   \
+        __p4d = p4d_offset(pgd, address);               \
+        if ((__p4d != NULL) &&                          \
+            !(p4d_bad(*__p4d) || p4d_none(*__p4d))) {   \
+            __pud = pud_offset(__p4d, address);         \
+            if ((__pud != NULL) &&                      \
+                !(pud_bad(*__pud) || pud_none(*__pud))) \
+                __pmd = pmd_offset(__pud, address);     \
+        }                                               \
+        __pmd;                                          \
+    })
+#elif defined(PUD_SHIFT) /* 4-level pgtable */
 #define NV_PMD_OFFSET(address, pgd)                     \
    ({                                                   \
         pmd_t *__pmd = NULL;                            \

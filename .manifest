@@ -1,0 +1,189 @@
+NVIDIA Accelerated Graphics Driver for Linux-x86_64
+304.137
+nv-linux.o
+nvidia
+NVdriver nvidia-uvm nvidia-modeset nvidia nvidia0 nvidia1 nvidia2 nvidia3 nvidia4 nvidia5 nvidia6 nvidia7 nvidia-frontend
+NVdriver nvidia-uvm.ko nvidia-uvm.ko.gz nvidia-modeset.ko nvidia-modeset.ko.gz nvidia.o nvidia.ko nvidia.o.gz nvidia.ko.gz nvidia0.ko nvidia0.ko.gz nvidia1.ko nvidia1.ko.gz nvidia2.ko nvidia2.ko.gz nvidia3.ko nvidia3.ko.gz nvidia4.ko nvidia4.ko.gz nvidia5.ko nvidia5.ko.gz nvidia6.ko nvidia6.ko.gz nvidia7.ko nvidia7.ko.gz nvidia-frontend.ko nvidia-frontend.ko.gz
+./kernel/
+./kernel/precompiled/
+libnvidia-glcore.so.304.137 0755 OPENGL_LIB NATIVE
+libGL.so.304.137 0755 OPENGL_LIB NATIVE
+libGL.so.1 0000 OPENGL_SYMLINK NATIVE libGL.so.304.137
+libGL.so 0000 OPENGL_SYMLINK NATIVE libGL.so.1
+libglx.so.304.137 0755 GLX_MODULE_SHARED_LIB extensions
+libglx.so 0000 GLX_MODULE_SYMLINK extensions/ libglx.so.304.137
+libnvidia-tls.so.304.137 0755 TLS_LIB NATIVE CLASSIC /
+tls/libnvidia-tls.so.304.137 0755 TLS_LIB NATIVE NEW tls/
+libGL.la 0644 LIBGL_LA NATIVE
+nvidia_drv.so 0755 XMODULE_SHARED_LIB drivers/
+libnvidia-wfb.so.304.137 0755 XMODULE_SHARED_LIB /
+libnvidia-wfb.so.1 0000 XMODULE_SYMLINK / libnvidia-wfb.so.304.137
+libwfb.so 0000 XMODULE_NEWSYM / libnvidia-wfb.so.1
+libXvMCNVIDIA.a 0444 XLIB_STATIC_LIB
+libXvMCNVIDIA.so.304.137 0755 XLIB_SHARED_LIB
+libXvMCNVIDIA_dynamic.so.1 0000 XLIB_SYMLINK libXvMCNVIDIA.so.304.137
+libXvMCNVIDIA_dynamic.so 0000 XLIB_SYMLINK libXvMCNVIDIA_dynamic.so.1
+gl.h 0444 OPENGL_HEADER GL/
+glext.h 0444 OPENGL_HEADER GL/
+glx.h 0444 OPENGL_HEADER GL/
+glxext.h 0444 OPENGL_HEADER GL/
+NVIDIA_Changelog 0444 DOCUMENTATION NVIDIA_GLX-1.0/
+nvidia-settings.png 0444 DOCUMENTATION NVIDIA_GLX-1.0/
+LICENSE 0444 DOCUMENTATION NVIDIA_GLX-1.0/
+nvidia-settings.desktop 0444 DOT_DESKTOP NVIDIA_GLX-1.0/
+nvidia-smi 0755 UTILITY_BINARY
+nvidia-smi.1.gz 0444 MANPAGE man1/
+libnvidia-ml.so.304.137 0755 CUDA_LIB NATIVE /
+libnvidia-ml.so.1 0000 CUDA_SYMLINK NATIVE / libnvidia-ml.so.304.137
+libnvidia-ml.so 0000 CUDA_SYMLINK NATIVE / libnvidia-ml.so.1
+nvidia-debugdump 0755 UTILITY_BINARY
+nvidia-xconfig 0755 UTILITY_BINARY
+nvidia-xconfig.1.gz 0444 MANPAGE man1/
+nvidia-settings 0755 UTILITY_BINARY
+nvidia-settings.1.gz 0444 MANPAGE man1/
+nvidia-bug-report.sh 0755 UTILITY_BINARY
+nvidia-installer.1.gz 0444 MANPAGE man1/
+nvidia-installer 0755 INSTALLER_BINARY
+nvidia-uninstall 0000 UTILITY_BIN_SYMLINK nvidia-installer
+libnvidia-cfg.so.304.137 0755 UTILITY_LIB
+libnvidia-cfg.so.1 0000 UTILITY_LIB_SYMLINK libnvidia-cfg.so.304.137
+libnvidia-cfg.so 0000 UTILITY_LIB_SYMLINK libnvidia-cfg.so.1
+README.txt 0444 DOCUMENTATION NVIDIA_GLX-1.0/
+nvidia-drm-outputclass.conf 0444 XORG_OUTPUTCLASS_CONFIG
+kernel/nv-kernel.o 0644 KERNEL_MODULE_SRC
+kernel/nv.c 0644 KERNEL_MODULE_SRC
+kernel/nv-acpi.c 0644 KERNEL_MODULE_SRC
+kernel/nv-chrdev.c 0644 KERNEL_MODULE_SRC
+kernel/nv-cray.c 0644 KERNEL_MODULE_SRC
+kernel/nv-drm.c 0644 KERNEL_MODULE_SRC
+kernel/nv-gvi.c 0644 KERNEL_MODULE_SRC
+kernel/nv-i2c.c 0644 KERNEL_MODULE_SRC
+kernel/nv-mempool.c 0644 KERNEL_MODULE_SRC
+kernel/nv-mlock.c 0644 KERNEL_MODULE_SRC
+kernel/nv-mmap.c 0644 KERNEL_MODULE_SRC
+kernel/nv-p2p.c 0644 KERNEL_MODULE_SRC
+kernel/nv-pat.c 0644 KERNEL_MODULE_SRC
+kernel/nv-procfs.c 0644 KERNEL_MODULE_SRC
+kernel/nv-usermap.c 0644 KERNEL_MODULE_SRC
+kernel/nv-vm.c 0644 KERNEL_MODULE_SRC
+kernel/nv-vtophys.c 0644 KERNEL_MODULE_SRC
+kernel/os-agp.c 0644 KERNEL_MODULE_SRC
+kernel/os-interface.c 0644 KERNEL_MODULE_SRC
+kernel/os-mtrr.c 0644 KERNEL_MODULE_SRC
+kernel/os-registry.c 0644 KERNEL_MODULE_SRC
+kernel/os-smp.c 0644 KERNEL_MODULE_SRC
+kernel/os-usermap.c 0644 KERNEL_MODULE_SRC
+kernel/conftest.sh 0644 KERNEL_MODULE_SRC
+kernel/nv.h 0644 KERNEL_MODULE_SRC
+kernel/nv-linux.h 0644 KERNEL_MODULE_SRC
+kernel/nv-memdbg.h 0644 KERNEL_MODULE_SRC
+kernel/nv-misc.h 0644 KERNEL_MODULE_SRC
+kernel/nv-p2p.h 0644 KERNEL_MODULE_SRC
+kernel/nv-proto.h 0644 KERNEL_MODULE_SRC
+kernel/nv-pat.h 0644 KERNEL_MODULE_SRC
+kernel/nv-reg.h 0644 KERNEL_MODULE_SRC
+kernel/os-agp.h 0644 KERNEL_MODULE_SRC
+kernel/os-interface.h 0644 KERNEL_MODULE_SRC
+kernel/cpuopsys.h 0644 KERNEL_MODULE_SRC
+kernel/g_nvreadme.h 0644 KERNEL_MODULE_SRC
+kernel/nverror.h 0644 KERNEL_MODULE_SRC
+kernel/nvtypes.h 0644 KERNEL_MODULE_SRC
+kernel/rmil.h 0644 KERNEL_MODULE_SRC
+kernel/rmretval.h 0644 KERNEL_MODULE_SRC
+kernel/xapi-sdk.h 0644 KERNEL_MODULE_SRC
+kernel/gcc-version-check.c 0644 KERNEL_MODULE_SRC
+kernel/Makefile.nvidia 0644 KERNEL_MODULE_SRC
+kernel/Makefile.kbuild 0644 KERNEL_MODULE_SRC
+kernel/makefile 0644 KERNEL_MODULE_SRC
+kernel/dkms.conf 0644 KERNEL_MODULE_SRC
+libcuda.so.304.137 0755 CUDA_LIB NATIVE /
+libcuda.so.1 0000 CUDA_SYMLINK NATIVE / libcuda.so.304.137
+libcuda.so 0000 CUDA_SYMLINK NATIVE / libcuda.so.1
+libnvidia-opencl.so.304.137 0755 CUDA_LIB NATIVE /
+libnvidia-opencl.so.1 0000 CUDA_SYMLINK NATIVE / libnvidia-opencl.so.304.137
+libOpenCL.so.1.0.0 0755 CUDA_LIB NATIVE /
+libOpenCL.so.1.0 0000 CUDA_SYMLINK NATIVE / libOpenCL.so.1.0.0
+libOpenCL.so.1 0000 CUDA_SYMLINK NATIVE / libOpenCL.so.1.0
+libOpenCL.so 0000 CUDA_SYMLINK NATIVE / libOpenCL.so.1
+nvidia.icd 0444 CUDA_ICD
+nvidia-cuda-proxy-control 0755 UTILITY_BINARY
+nvidia-cuda-proxy-server 0755 UTILITY_BINARY
+nvidia-cuda-proxy-control.1.gz 0444 MANPAGE man1/
+libnvidia-compiler.so.304.137 0755 CUDA_LIB NATIVE /
+libvdpau_nvidia.so.304.137 0755 VDPAU_LIB NATIVE vdpau/
+libvdpau_nvidia.so.1 0000 VDPAU_SYMLINK NATIVE vdpau/ libvdpau_nvidia.so.304.137
+libvdpau_nvidia.so 0000 VDPAU_SYMLINK NATIVE / vdpau/libvdpau_nvidia.so.304.137
+libnvcuvid.so.304.137 0755 NVCUVID_LIB NATIVE
+libnvcuvid.so.1 0000 NVCUVID_LIB_SYMLINK NATIVE libnvcuvid.so.304.137
+libnvcuvid.so 0000 NVCUVID_LIB_SYMLINK NATIVE libnvcuvid.so.1
+html/acknowledgements.html 0444 DOCUMENTATION NVIDIA_GLX-1.0/html
+html/addressingcapabilities.html 0444 DOCUMENTATION NVIDIA_GLX-1.0/html
+html/addtlresources.html 0444 DOCUMENTATION NVIDIA_GLX-1.0/html
+html/appendices.html 0444 DOCUMENTATION NVIDIA_GLX-1.0/html
+html/audiosupport.html 0444 DOCUMENTATION NVIDIA_GLX-1.0/html
+html/commonproblems.html 0444 DOCUMENTATION NVIDIA_GLX-1.0/html
+html/configlaptop.html 0444 DOCUMENTATION NVIDIA_GLX-1.0/html
+html/configmultxscreens.html 0444 DOCUMENTATION NVIDIA_GLX-1.0/html
+html/configtvout.html 0444 DOCUMENTATION NVIDIA_GLX-1.0/html
+html/configtwinview.html 0444 DOCUMENTATION NVIDIA_GLX-1.0/html
+html/configuringagp.html 0444 DOCUMENTATION NVIDIA_GLX-1.0/html
+html/depth30.html 0444 DOCUMENTATION NVIDIA_GLX-1.0/html
+html/displaydevicenames.html 0444 DOCUMENTATION NVIDIA_GLX-1.0/html
+html/dma_issues.html 0444 DOCUMENTATION NVIDIA_GLX-1.0/html
+html/dpi.html 0444 DOCUMENTATION NVIDIA_GLX-1.0/html
+html/editxconfig.html 0444 DOCUMENTATION NVIDIA_GLX-1.0/html
+html/faq.html 0444 DOCUMENTATION NVIDIA_GLX-1.0/html
+html/flippingubb.html 0444 DOCUMENTATION NVIDIA_GLX-1.0/html
+html/framelock.html 0444 DOCUMENTATION NVIDIA_GLX-1.0/html
+html/glxsupport.html 0444 DOCUMENTATION NVIDIA_GLX-1.0/html
+html/i2c.html 0444 DOCUMENTATION NVIDIA_GLX-1.0/html
+html/index.html 0444 DOCUMENTATION NVIDIA_GLX-1.0/html
+html/installationandconfiguration.html 0444 DOCUMENTATION NVIDIA_GLX-1.0/html
+html/installdriver.html 0444 DOCUMENTATION NVIDIA_GLX-1.0/html
+html/installedcomponents.html 0444 DOCUMENTATION NVIDIA_GLX-1.0/html
+html/introduction.html 0444 DOCUMENTATION NVIDIA_GLX-1.0/html
+html/knownissues.html 0444 DOCUMENTATION NVIDIA_GLX-1.0/html
+html/minimumrequirements.html 0444 DOCUMENTATION NVIDIA_GLX-1.0/html
+html/newusertips.html 0444 DOCUMENTATION NVIDIA_GLX-1.0/html
+html/nvidia-debugdump.html 0444 DOCUMENTATION NVIDIA_GLX-1.0/html
+html/nvidia-ml.html 0444 DOCUMENTATION NVIDIA_GLX-1.0/html
+html/nvidia-smi.html 0444 DOCUMENTATION NVIDIA_GLX-1.0/html
+html/nvidiasettings.html 0444 DOCUMENTATION NVIDIA_GLX-1.0/html
+html/openglenvvariables.html 0444 DOCUMENTATION NVIDIA_GLX-1.0/html
+html/optimus.html 0444 DOCUMENTATION NVIDIA_GLX-1.0/html
+html/powermanagement.html 0444 DOCUMENTATION NVIDIA_GLX-1.0/html
+html/procinterface.html 0444 DOCUMENTATION NVIDIA_GLX-1.0/html
+html/programmingmodes.html 0444 DOCUMENTATION NVIDIA_GLX-1.0/html
+html/sdi.html 0444 DOCUMENTATION NVIDIA_GLX-1.0/html
+html/selectdriver.html 0444 DOCUMENTATION NVIDIA_GLX-1.0/html
+html/sli.html 0444 DOCUMENTATION NVIDIA_GLX-1.0/html
+html/supportedchips.html 0444 DOCUMENTATION NVIDIA_GLX-1.0/html
+html/vdpausupport.html 0444 DOCUMENTATION NVIDIA_GLX-1.0/html
+html/xcompositeextension.html 0444 DOCUMENTATION NVIDIA_GLX-1.0/html
+html/xconfigoptions.html 0444 DOCUMENTATION NVIDIA_GLX-1.0/html
+html/xineramaglx.html 0444 DOCUMENTATION NVIDIA_GLX-1.0/html
+html/xrandrextension.html 0444 DOCUMENTATION NVIDIA_GLX-1.0/html
+html/xvmcsupport.html 0444 DOCUMENTATION NVIDIA_GLX-1.0/html
+./32/libcuda.so.304.137 0755 CUDA_LIB COMPAT32 /
+./32/libnvidia-ml.so.304.137 0755 CUDA_LIB COMPAT32 /
+./32/libOpenCL.so.1.0.0 0755 CUDA_LIB COMPAT32 /
+./32/libnvidia-compiler.so.304.137 0755 CUDA_LIB COMPAT32 /
+./32/libnvidia-opencl.so.304.137 0755 CUDA_LIB COMPAT32 /
+./32/libGL.so.304.137 0755 OPENGL_LIB COMPAT32
+./32/libnvidia-glcore.so.304.137 0755 OPENGL_LIB COMPAT32
+./32/libGL.la 0644 LIBGL_LA COMPAT32
+./32/libnvidia-tls.so.304.137 0755 TLS_LIB COMPAT32 CLASSIC /
+./32/tls/libnvidia-tls.so.304.137 0755 TLS_LIB COMPAT32 NEW tls/
+./32/libvdpau_nvidia.so.304.137 0755 VDPAU_LIB COMPAT32 vdpau/
+libcuda.so.1 0000 CUDA_SYMLINK COMPAT32 / libcuda.so.304.137
+libcuda.so 0000 CUDA_SYMLINK COMPAT32 / libcuda.so.1
+libnvidia-ml.so.1 0000 CUDA_SYMLINK COMPAT32 / libnvidia-ml.so.304.137
+libnvidia-ml.so 0000 CUDA_SYMLINK COMPAT32 / libnvidia-ml.so.1
+libOpenCL.so.1.0 0000 CUDA_SYMLINK COMPAT32 / libOpenCL.so.1.0.0
+libOpenCL.so.1 0000 CUDA_SYMLINK COMPAT32 / libOpenCL.so.1.0
+libOpenCL.so 0000 CUDA_SYMLINK COMPAT32 / libOpenCL.so.1
+libnvidia-opencl.so.1 0000 CUDA_SYMLINK COMPAT32 / libnvidia-opencl.so.304.137
+libGL.so.1 0000 OPENGL_SYMLINK COMPAT32 libGL.so.304.137
+libGL.so 0000 OPENGL_SYMLINK COMPAT32 libGL.so.1
+libvdpau_nvidia.so 0000 VDPAU_SYMLINK COMPAT32 / vdpau/libvdpau_nvidia.so.304.137
+libvdpau_nvidia.so.1 0000 VDPAU_SYMLINK COMPAT32 vdpau/ libvdpau_nvidia.so.304.137

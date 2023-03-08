@@ -16,11 +16,28 @@
 
 #if defined(NV_DRM_AVAILABLE)
 
+#if defined(NV_DRM_DRMP_H_PRESENT)
 #include <drm/drmP.h>
+#else
+#include <uapi/drm/drm.h>
+#include <uapi/drm/drm_mode.h>
+
+#include <drm/drm_agpsupport.h>
+#include <drm/drm_crtc.h>
+#include <drm/drm_drv.h>
+#include <drm/drm_prime.h>
+#include <drm/drm_pci.h>
+#include <drm/drm_ioctl.h>
+#include <drm/drm_sysfs.h>
+#include <drm/drm_vblank.h>
+#include <drm/drm_device.h>
+#endif
 
 #if defined(NV_DRM_DRM_GEM_H_PRESENT)
 #include <drm/drm_gem.h>
 #endif
+
+#include <linux/version.h>
 
 extern nv_linux_state_t *nv_linux_devices;
 
@@ -94,7 +111,7 @@ static const struct file_operations nv_drm_fops = {
 };
 
 static struct drm_driver nv_drm_driver = {
-#if defined(DRIVER_LEGACY)
+#if defined(DRIVER_LEGACY) || LINUX_VERSION_CODE >= KERNEL_VERSION(5, 0, 0)
     .driver_features = DRIVER_LEGACY,
 #else
     .driver_features = 0,
@@ -121,7 +138,38 @@ int __init nv_drm_init(
 {
     int ret = 0;
 #if defined(NV_DRM_AVAILABLE)
+#if LINUX_VERSION_CODE < KERNEL_VERSION(4, 14, 0)
     ret = drm_pci_init(&nv_drm_driver, pci_driver);
+#elif LINUX_VERSION_CODE < KERNEL_VERSION(5, 6, 0)
+    ret = drm_legacy_pci_init(&nv_drm_driver, pci_driver);
+#else
+    struct pci_dev *pdev = NULL;
+    const struct pci_device_id *pid;
+    int i;
+
+    INIT_LIST_HEAD(&nv_drm_driver.legacy_dev_list);
+        for (i = 0; pci_driver->id_table[i].vendor != 0; i++) {
+                pid = &pci_driver->id_table[i];
+
+        /* Loop around setting up a DRM device for each PCI device
+         * matching our ID and device class.  If we had the internal
+         * function that pci_get_subsys and pci_get_class used, we'd
+         * be able to just pass pid in instead of doing a two-stage
+         * thing.
+         */
+                pdev = NULL;
+                while ((pdev =
+                        pci_get_subsys(pid->vendor, pid->device, pid->subvendor,
+                                       pid->subdevice, pdev)) != NULL) {
+                        if ((pdev->class & pid->class_mask) != pid->class)
+                                continue;
+
+                        /* stealth mode requires a manual probe */
+                        pci_dev_get(pdev);
+                        drm_get_pci_dev(pdev, pid, &nv_drm_driver);
+                }
+        }
+#endif
 #endif
     return ret;
 }
@@ -131,6 +179,17 @@ void nv_drm_exit(
 )
 {
 #if defined(NV_DRM_AVAILABLE)
+#if LINUX_VERSION_CODE < KERNEL_VERSION(4, 14, 0)
     drm_pci_exit(&nv_drm_driver, pci_driver);
+#elif LINUX_VERSION_CODE < KERNEL_VERSION(5, 6, 0)
+    drm_legacy_pci_exit(&nv_drm_driver, pci_driver);
+#else
+    struct drm_device *dev, *tmp;
+    list_for_each_entry_safe(dev, tmp, &nv_drm_driver.legacy_dev_list, legacy_dev_list) {
+        list_del(&dev->legacy_dev_list);
+        drm_put_dev(dev);
+    }
+    DRM_INFO("Module unloaded\n");
+#endif
 #endif
 }
