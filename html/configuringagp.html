@@ -1,0 +1,397 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+<head>
+<meta name="generator" content=
+"HTML Tidy for Linux/x86 (vers 1 September 2005), see www.w3.org">
+<meta http-equiv="Content-Type" content=
+"text/html; charset=us-ascii">
+<title>Chapter&nbsp;12.&nbsp;Configuring AGP</title>
+<meta name="generator" content="DocBook XSL Stylesheets V1.68.1">
+<link rel="start" href="index.html" title=
+"NVIDIA Accelerated Linux Graphics Driver README and Installation Guide">
+<link rel="up" href="installationandconfiguration.html" title=
+"Part&nbsp;I.&nbsp;Installation and Configuration Instructions">
+<link rel="prev" href="openglenvvariables.html" title=
+"Chapter&nbsp;11.&nbsp;Specifying OpenGL Environment Variable Settings">
+<link rel="next" href="configtwinview.html" title=
+"Chapter&nbsp;13.&nbsp;Configuring Multiple Display Devices on One X Screen">
+</head>
+<body>
+<div class="navheader">
+<table width="100%" summary="Navigation header">
+<tr>
+<th colspan="3" align="center">Chapter&nbsp;12.&nbsp;Configuring
+AGP</th>
+</tr>
+<tr>
+<td width="20%" align="left"><a accesskey="p" href=
+"openglenvvariables.html">Prev</a>&nbsp;</td>
+<th width="60%" align="center">Part&nbsp;I.&nbsp;Installation and
+Configuration Instructions</th>
+<td width="20%" align="right">&nbsp;<a accesskey="n" href=
+"configtwinview.html">Next</a></td>
+</tr>
+</table>
+<hr></div>
+<div class="chapter" lang="en">
+<div class="titlepage">
+<div>
+<div>
+<h2 class="title"><a name="configuringagp" id=
+"configuringagp"></a>Chapter&nbsp;12.&nbsp;Configuring AGP</h2>
+</div>
+</div>
+</div>
+<p>There are several choices for configuring the NVIDIA kernel
+module's use of AGP on Linux. You can choose to either use the
+NVIDIA builtin AGP driver (NvAGP), or the AGP driver that comes
+with the Linux kernel (AGPGART). This is controlled through the
+"NvAGP" option in your X config file:</p>
+<pre class="screen">
+    Option "NvAGP" "0"  ... disables AGP support
+    Option "NvAGP" "1"  ... use NvAGP, if possible
+    Option "NvAGP" "2"  ... use AGPGART, if possible
+    Option "NvAGP" "3"  ... try AGPGART; if that fails, try NvAGP
+</pre>
+<p>The default is 3 (the default was 1 until after 1.0-1251).</p>
+<p>You should use the AGP driver that works best with your AGP
+chipset. If you are experiencing problems with stability, you may
+want to start by disabling AGP and seeing if that solves the
+problems. Then you can experiment with the AGP driver
+configuration.</p>
+<p>You can query the current AGP status at any time via the
+<code class="filename">/proc</code> filesystem interface (see
+<a href="procinterface.html" title=
+"Chapter&nbsp;22.&nbsp;Using the Proc Filesystem Interface">Chapter&nbsp;22,
+<i>Using the Proc Filesystem Interface</i></a>).</p>
+<p>To use the Linux 2.4 AGPGART driver, you will need to compile it
+with your kernel and either statically link it in, or build it as a
+module and load it. To use the AGPGART driver provided by Linux 2.6
+or more recent Linux kernels, both the AGPGART frontend module,
+<code class="filename">apggart.ko</code>, and the backend module
+for your AGP chipset (<code class="filename">nvidia-agp.ko</code>,
+<code class="filename">intel-agp.ko</code>, <code class=
+"filename">via-agp.ko</code>, ...) need to be statically linked
+into the kernel, or built as modules and loaded.</p>
+<p>NVIDIA builtin AGP support is unavailable if an AGPGART backend
+driver is loaded into the kernel. On Linux 2.4, it is recommended
+that you compile AGPGART as a module and make sure that it is not
+loaded when trying to use the NVIDIA AGP driver. On Linux 2.6 or
+later Linux kernels, the <code class="filename">agpgart.ko</code>
+frontend module will always be loaded, as it is used by the NVIDIA
+kernel module to determine if an AGPGART backend module is loaded.
+When the NVIDIA AGP driver is to be used on a Linux 2.6 or newer
+system, it is recommended that you make sure the AGPGART backend
+drivers are built as modules and that they are not loaded.</p>
+<p>Also note that changing AGP drivers generally requires a reboot
+before the changes actually take effect.</p>
+<p>If you are using a Linux 2.6 or newer Linux kernel that has the
+Linux AGPGART driver statically linked in (some distribution
+kernels do), you can pass the</p>
+<pre class="screen">
+    agp=off
+</pre>
+<p>parameter to the kernel (via LILO or GRUB, for example) to
+disable AGPGART support. As of Linux 2.6.11, most AGPGART backend
+drivers should respect this parameter.</p>
+<p>The following AGP chipsets are supported by the NVIDIA AGP
+driver; for all other chipsets it is recommended that you use the
+AGPGART module.</p>
+<div class="informaltable">
+<table summary="(no summary available)" border="0">
+<colgroup>
+<col></colgroup>
+<thead>
+<tr>
+<th>Supported AGP Chipsets</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Intel 440LX</td>
+</tr>
+<tr>
+<td>Intel 440BX</td>
+</tr>
+<tr>
+<td>Intel 440GX</td>
+</tr>
+<tr>
+<td>Intel 815 ("Solano")</td>
+</tr>
+<tr>
+<td>Intel 820 ("Camino")</td>
+</tr>
+<tr>
+<td>Intel 830M</td>
+</tr>
+<tr>
+<td>Intel 840 ("Carmel")</td>
+</tr>
+<tr>
+<td>Intel 845 ("Brookdale")</td>
+</tr>
+<tr>
+<td>Intel 845G</td>
+</tr>
+<tr>
+<td>Intel 850 ("Tehama")</td>
+</tr>
+<tr>
+<td>Intel 855 ("Odem")</td>
+</tr>
+<tr>
+<td>Intel 860 ("Colusa")</td>
+</tr>
+<tr>
+<td>Intel 865G ("Springdale")</td>
+</tr>
+<tr>
+<td>Intel 875P ("Canterwood")</td>
+</tr>
+<tr>
+<td>Intel E7205 ("Granite Bay")</td>
+</tr>
+<tr>
+<td>Intel E7505 ("Placer")</td>
+</tr>
+<tr>
+<td>AMD 751 ("Irongate")</td>
+</tr>
+<tr>
+<td>AMD 761 ("IGD4")</td>
+</tr>
+<tr>
+<td>AMD 762 ("IGD4 MP")</td>
+</tr>
+<tr>
+<td>AMD 8151 ("Lokar")</td>
+</tr>
+<tr>
+<td>VIA 8371</td>
+</tr>
+<tr>
+<td>VIA 82C694X</td>
+</tr>
+<tr>
+<td>VIA KT133</td>
+</tr>
+<tr>
+<td>VIA KT266</td>
+</tr>
+<tr>
+<td>VIA KT400</td>
+</tr>
+<tr>
+<td>VIA P4M266</td>
+</tr>
+<tr>
+<td>VIA P4M266A</td>
+</tr>
+<tr>
+<td>VIA P4X400</td>
+</tr>
+<tr>
+<td>VIA K8T800</td>
+</tr>
+<tr>
+<td>VIA K8N800</td>
+</tr>
+<tr>
+<td>VIA PT880</td>
+</tr>
+<tr>
+<td>VIA KT880</td>
+</tr>
+<tr>
+<td>RCC CNB20LE</td>
+</tr>
+<tr>
+<td>RCC 6585HE</td>
+</tr>
+<tr>
+<td>Micron SAMDDR ("Samurai")</td>
+</tr>
+<tr>
+<td>Micron SCIDDR ("Scimitar")</td>
+</tr>
+<tr>
+<td>NVIDIA nForce</td>
+</tr>
+<tr>
+<td>NVIDIA nForce2</td>
+</tr>
+<tr>
+<td>NVIDIA nForce3</td>
+</tr>
+<tr>
+<td>ALi 1621</td>
+</tr>
+<tr>
+<td>ALi 1631</td>
+</tr>
+<tr>
+<td>ALi 1647</td>
+</tr>
+<tr>
+<td>ALi 1651</td>
+</tr>
+<tr>
+<td>ALi 1671</td>
+</tr>
+<tr>
+<td>SiS 630</td>
+</tr>
+<tr>
+<td>SiS 633</td>
+</tr>
+<tr>
+<td>SiS 635</td>
+</tr>
+<tr>
+<td>SiS 645</td>
+</tr>
+<tr>
+<td>SiS 646</td>
+</tr>
+<tr>
+<td>SiS 648</td>
+</tr>
+<tr>
+<td>SiS 648FX</td>
+</tr>
+<tr>
+<td>SiS 650</td>
+</tr>
+<tr>
+<td>SiS 651</td>
+</tr>
+<tr>
+<td>SiS 655</td>
+</tr>
+<tr>
+<td>SiS 655FX</td>
+</tr>
+<tr>
+<td>SiS 661</td>
+</tr>
+<tr>
+<td>SiS 730</td>
+</tr>
+<tr>
+<td>SiS 733</td>
+</tr>
+<tr>
+<td>SiS 735</td>
+</tr>
+<tr>
+<td>SiS 745</td>
+</tr>
+<tr>
+<td>SiS 755</td>
+</tr>
+<tr>
+<td>ATI RS200M</td>
+</tr>
+</tbody>
+</table>
+</div>
+<p></p>
+<p>If you are experiencing AGP stability problems, you should be
+aware of the following:</p>
+<div class="variablelist">
+<p class="title"><b>Additional AGP Information</b></p>
+<p>On Athlon motherboards with the VIA KX133 or 694X chip set, such
+as the ASUS K7V motherboard, NVIDIA drivers default to AGP 2x mode
+to work around insufficient drive strength on one of the signals.
+You can force AGP 4x by setting NVreg_EnableVia4x to 1. Note that
+this may cause the system to become unstable.</p>
+<dl>
+<dt><span class="term">AGP Rate</span></dt>
+<dd>
+<p>You may want to decrease the AGP rate setting if you are seeing
+lockups with the value you are currently using. You can do so by
+extracting the <code class="filename">.run</code> file:</p>
+<pre class="screen">
+    # sh NVIDIA-Linux-x86_64-304.137.run --extract-only
+    # cd NVIDIA-Linux-x86_64-304.137/kernel/
+</pre>
+<p>Then edit nv-reg.h, and make the following changes:</p>
+<pre class="screen">
+    - NV_DEFINE_REG_ENTRY(__NV_REQ_AGP_RATE, 15);
+    + NV_DEFINE_REG_ENTRY(__NV_REQ_AGP_RATE, 4);   /* force AGP Rate to 4x */
+</pre>
+<p>or</p>
+<pre class="screen">
+    + NV_DEFINE_REG_ENTRY(__NV_REQ_AGP_RATE, 2);   /* force AGP Rate to 2x */
+</pre>
+<p>or</p>
+<pre class="screen">
+    + NV_DEFINE_REG_ENTRY(__NV_REQ_AGP_RATE, 1);   /* force AGP Rate to 1x */
+</pre>
+<p>Then recompile and load the new kernel module. To do this, run
+<code class="filename">nvidia-installer</code> with the
+<code class="option">-n</code> command line option:</p>
+<pre class="screen">
+    # cd ../../..; ./nvidia-installer -n
+</pre>
+<p></p>
+</dd>
+<dt><span class="term">AGP drive strength BIOS setting (Via-based
+motherboards)</span></dt>
+<dd>
+<p>Many Via-based motherboards allow adjusting the AGP drive
+strength in the system BIOS. The setting of this option largely
+affects system stability, the range between 0xEA and 0xEE seems to
+work best for NVIDIA hardware. Setting either nibble to 0xF
+generally results in severe stability problems.</p>
+<p>If you decide to experiment with this, you need to be aware of
+the fact that you are doing so at your own risk and that you may
+render your system unbootable with improper settings until you
+reset the setting to a working value (w/ a PCI graphics card or by
+resetting the BIOS to its default values).</p>
+</dd>
+<dt><span class="term">System BIOS version</span></dt>
+<dd>
+<p>Make sure you have the latest system BIOS provided by the
+motherboard manufacturer.</p>
+<p>On ALi1541 and ALi1647 chipsets, NVIDIA drivers disable AGP to
+work around timing and signal integrity problems. You can force AGP
+to be enabled on these chipsets by setting NVreg_EnableALiAGP to 1.
+Note that this may cause the system to become unstable.</p>
+<p>Early system BIOS revisions for the ASUS A7V8X-X KT400
+motherboard misconfigure the chipset when an AGP 2.x graphics card
+is installed; if X hangs on your ASUS KT400 system with either
+Linux AGPGART or NvAGP enabled and the installed graphics card is
+not an AGP 8x device, make sure that you have the latest system
+BIOS installed.</p>
+</dd>
+</dl>
+</div>
+<p></p>
+</div>
+<div class="navfooter">
+<hr>
+<table width="100%" summary="Navigation footer">
+<tr>
+<td width="40%" align="left"><a accesskey="p" href=
+"openglenvvariables.html">Prev</a>&nbsp;</td>
+<td width="20%" align="center"><a accesskey="u" href=
+"installationandconfiguration.html">Up</a></td>
+<td width="40%" align="right">&nbsp;<a accesskey="n" href=
+"configtwinview.html">Next</a></td>
+</tr>
+<tr>
+<td width="40%" align="left" valign="top">
+Chapter&nbsp;11.&nbsp;Specifying OpenGL Environment Variable
+Settings&nbsp;</td>
+<td width="20%" align="center"><a accesskey="h" href=
+"index.html">Home</a></td>
+<td width="40%" align="right" valign="top">
+&nbsp;Chapter&nbsp;13.&nbsp;Configuring Multiple Display Devices on
+One X Screen</td>
+</tr>
+</table>
+</div>
+</body>
+</html>

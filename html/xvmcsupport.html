@@ -1,0 +1,81 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+<head>
+<meta name="generator" content=
+"HTML Tidy for Linux/x86 (vers 1 September 2005), see www.w3.org">
+<meta http-equiv="Content-Type" content=
+"text/html; charset=us-ascii">
+<title>Appendix&nbsp;G.&nbsp;XvMC Support</title>
+<meta name="generator" content="DocBook XSL Stylesheets V1.68.1">
+<link rel="start" href="index.html" title=
+"NVIDIA Accelerated Linux Graphics Driver README and Installation Guide">
+<link rel="up" href="appendices.html" title=
+"Part&nbsp;II.&nbsp;Appendices">
+<link rel="prev" href="i2c.html" title=
+"Appendix&nbsp;F.&nbsp;i2c Bus Support">
+<link rel="next" href="vdpausupport.html" title=
+"Appendix&nbsp;H.&nbsp;VDPAU Support">
+</head>
+<body>
+<div class="navheader">
+<table width="100%" summary="Navigation header">
+<tr>
+<th colspan="3" align="center">Appendix&nbsp;G.&nbsp;XvMC
+Support</th>
+</tr>
+<tr>
+<td width="20%" align="left"><a accesskey="p" href=
+"i2c.html">Prev</a>&nbsp;</td>
+<th width="60%" align="center">Part&nbsp;II.&nbsp;Appendices</th>
+<td width="20%" align="right">&nbsp;<a accesskey="n" href=
+"vdpausupport.html">Next</a></td>
+</tr>
+</table>
+<hr></div>
+<div class="appendix" lang="en">
+<div class="titlepage">
+<div>
+<div>
+<h2 class="title"><a name="xvmcsupport" id=
+"xvmcsupport"></a>Appendix&nbsp;G.&nbsp;XvMC Support</h2>
+</div>
+</div>
+</div>
+<p>This release includes support for the XVideo Motion Compensation
+(XvMC) version 1.0 API on GeForce 6 series and GeForce 7 series
+add-in cards, as well as motherboard chipsets with integrated
+graphics that have PureVideo support based on these GPUs. There is
+a static library, "libXvMCNVIDIA.a", and a dynamic one,
+"libXvMCNVIDIA_dynamic.so", which is suitable for dlopening. XvMC's
+"IDCT" and "motion-compensation" levels of acceleration, AI44 and
+IA44 subpictures, and 4:2:0 Surfaces up to 2032x2032 are
+supported.</p>
+<p>libXvMCNVIDIA observes the XVMC_DEBUG environment variable and
+will provide some debug output to stderr when set to an appropriate
+integer value. '0' disables debug output. '1' enables debug output
+for failure conditions. '2' or higher enables output of warning
+messages.</p>
+</div>
+<div class="navfooter">
+<hr>
+<table width="100%" summary="Navigation footer">
+<tr>
+<td width="40%" align="left"><a accesskey="p" href=
+"i2c.html">Prev</a>&nbsp;</td>
+<td width="20%" align="center"><a accesskey="u" href=
+"appendices.html">Up</a></td>
+<td width="40%" align="right">&nbsp;<a accesskey="n" href=
+"vdpausupport.html">Next</a></td>
+</tr>
+<tr>
+<td width="40%" align="left" valign="top">Appendix&nbsp;F.&nbsp;i2c
+Bus Support&nbsp;</td>
+<td width="20%" align="center"><a accesskey="h" href=
+"index.html">Home</a></td>
+<td width="40%" align="right" valign="top">
+&nbsp;Appendix&nbsp;H.&nbsp;VDPAU Support</td>
+</tr>
+</table>
+</div>
+</body>
+</html>

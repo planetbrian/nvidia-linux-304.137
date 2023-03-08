@@ -1,0 +1,287 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+<head>
+<meta name="generator" content=
+"HTML Tidy for Linux/x86 (vers 1 September 2005), see www.w3.org">
+<meta http-equiv="Content-Type" content=
+"text/html; charset=us-ascii">
+<title>Chapter&nbsp;4.&nbsp;Installing the NVIDIA Driver</title>
+<meta name="generator" content="DocBook XSL Stylesheets V1.68.1">
+<link rel="start" href="index.html" title=
+"NVIDIA Accelerated Linux Graphics Driver README and Installation Guide">
+<link rel="up" href="installationandconfiguration.html" title=
+"Part&nbsp;I.&nbsp;Installation and Configuration Instructions">
+<link rel="prev" href="selectdriver.html" title=
+"Chapter&nbsp;3.&nbsp;Selecting and Downloading the NVIDIA Packages for Your System">
+<link rel="next" href="installedcomponents.html" title=
+"Chapter&nbsp;5.&nbsp;Listing of Installed Components">
+</head>
+<body>
+<div class="navheader">
+<table width="100%" summary="Navigation header">
+<tr>
+<th colspan="3" align="center">Chapter&nbsp;4.&nbsp;Installing the
+NVIDIA Driver</th>
+</tr>
+<tr>
+<td width="20%" align="left"><a accesskey="p" href=
+"selectdriver.html">Prev</a>&nbsp;</td>
+<th width="60%" align="center">Part&nbsp;I.&nbsp;Installation and
+Configuration Instructions</th>
+<td width="20%" align="right">&nbsp;<a accesskey="n" href=
+"installedcomponents.html">Next</a></td>
+</tr>
+</table>
+<hr></div>
+<div class="chapter" lang="en">
+<div class="titlepage">
+<div>
+<div>
+<h2 class="title"><a name="installdriver" id=
+"installdriver"></a>Chapter&nbsp;4.&nbsp;Installing the NVIDIA
+Driver</h2>
+</div>
+</div>
+</div>
+<div class="toc">
+<p><b>Table of Contents</b></p>
+<dl>
+<dt><span class="section"><a href=
+"installdriver.html#BeforeYouBegin89f39">Before you
+Begin</a></span></dt>
+<dt><span class="section"><a href=
+"installdriver.html#StartingTheInst6624e">Starting the
+Installer</a></span></dt>
+<dt><span class="section"><a href=
+"installdriver.html#InstallingTheKe997db">Installing the Kernel
+Interface</a></span></dt>
+<dt><span class="section"><a href=
+"installdriver.html#FeaturesOfTheIn257ba">Features of the
+Installer</a></span></dt>
+</dl>
+</div>
+<p>This chapter provides instructions for installing the NVIDIA
+driver. Note that after installation, but prior to using the
+driver, you must complete the steps described in <a href=
+"editxconfig.html" title=
+"Chapter&nbsp;6.&nbsp;Configuring X for the NVIDIA Driver">Chapter&nbsp;6,
+<i>Configuring X for the NVIDIA Driver</i></a>. Additional details
+that may be helpful for the new Linux user are provided in <a href=
+"newusertips.html" title=
+"Appendix&nbsp;J.&nbsp;Tips for New Linux Users">Appendix&nbsp;J,
+<i>Tips for New Linux Users</i></a>.</p>
+<div class="section" lang="en">
+<div class="titlepage">
+<div>
+<div>
+<h2 class="title" style="clear: both"><a name="BeforeYouBegin89f39"
+id="BeforeYouBegin89f39"></a>Before you Begin</h2>
+</div>
+</div>
+</div>
+<p>Before you begin the installation, exit the X server and
+terminate all OpenGL applications (note that it is possible that
+some OpenGL applications persist even after the X server has
+stopped). You should also set the default run level on your system
+such that it will boot to a VGA console, and not directly to X.
+Doing so will make it easier to recover if there is a problem
+during the installation process. See <a href="newusertips.html"
+title=
+"Appendix&nbsp;J.&nbsp;Tips for New Linux Users">Appendix&nbsp;J,
+<i>Tips for New Linux Users</i></a> for details.</p>
+<p>If you're installing on a system that is set up to use the
+Nouveau driver, then you should first disable it before attempting
+to install the NVIDIA driver. See <a href=
+"commonproblems.html#nouveau" title=
+"Interaction with the Nouveau Driver">Q &amp; A&nbsp;8.1,
+&ldquo;Interaction with the Nouveau Driver&rdquo;</a> for
+details.</p>
+</div>
+<div class="section" lang="en">
+<div class="titlepage">
+<div>
+<div>
+<h2 class="title" style="clear: both"><a name=
+"StartingTheInst6624e" id="StartingTheInst6624e"></a>Starting the
+Installer</h2>
+</div>
+</div>
+</div>
+<p>After you have downloaded the file <code class=
+"filename">NVIDIA-Linux-x86_64-304.137.run</code>, change to
+the directory containing the downloaded file, and as the
+<code class="systemitem">root</code> user run the executable:</p>
+<pre class="screen">
+    # cd yourdirectory
+    # sh NVIDIA-Linux-x86_64-304.137.run
+</pre>
+<p>The <code class="filename">.run</code> file is a self-extracting
+archive. When executed, it extracts the contents of the archive and
+runs the contained <code class="filename">nvidia-installer</code>
+utility, which provides an interactive interface to walk you
+through the installation.</p>
+<p><code class="filename">nvidia-installer</code> will also install
+itself to <code class="filename">/usr/bin/nvidia-installer</code>,
+which may be used at some later time to uninstall drivers,
+auto-download updated drivers, etc. The use of this utility is
+detailed later in this chapter.</p>
+<p>You may also supply command line options to the <code class=
+"filename">.run</code> file. Some of the more common options are
+listed below.</p>
+<div class="variablelist">
+<p class="title"><b>Common <code class="filename">.run</code>
+Options</b></p>
+<dl>
+<dt><span class="term"><code class=
+"option">--info</code></span></dt>
+<dd>
+<p>Print embedded info about the <code class="filename">.run</code>
+file and exit.</p>
+</dd>
+<dt><span class="term"><code class=
+"option">--check</code></span></dt>
+<dd>
+<p>Check integrity of the archive and exit.</p>
+</dd>
+<dt><span class="term"><code class=
+"option">--extract-only</code></span></dt>
+<dd>
+<p>Extract the contents of <code class=
+"filename">./NVIDIA-Linux-x86_64-304.137.run</code>, but do
+not run <code class="filename">nvidia-installer</code>.</p>
+</dd>
+<dt><span class="term"><code class=
+"option">--help</code></span></dt>
+<dd>
+<p>Print usage information for the common commandline options and
+exit.</p>
+</dd>
+<dt><span class="term"><code class=
+"option">--advanced-options</code></span></dt>
+<dd>
+<p>Print usage information for common command line options as well
+as the advanced options, and then exit.</p>
+</dd>
+</dl>
+</div>
+<p></p>
+</div>
+<div class="section" lang="en">
+<div class="titlepage">
+<div>
+<div>
+<h2 class="title" style="clear: both"><a name=
+"InstallingTheKe997db" id="InstallingTheKe997db"></a>Installing the
+Kernel Interface</h2>
+</div>
+</div>
+</div>
+<p>The NVIDIA kernel module has a kernel interface layer that must
+be compiled specifically for each kernel. NVIDIA distributes the
+source code to this kernel interface layer.</p>
+<p>When the installer is run, it will check your system for the
+required kernel sources and compile the kernel interface. You must
+have the source code for your kernel installed for compilation to
+work. On most systems, this means that you will need to locate and
+install the correct kernel-source, kernel-headers, or kernel-devel
+package; on some distributions, no additional packages are
+required.</p>
+<p>After the correct kernel interface has been compiled, the kernel
+interface will be linked with the closed-source portion of the
+NVIDIA kernel module. This requires that you have a linker
+installed on your system. The linker, usually <code class=
+"filename">/usr/bin/ld</code>, is part of the binutils package. You
+must have a linker installed prior to installing the NVIDIA
+driver.</p>
+<p>The installer will check for the presence of DKMS on your
+system. If DKMS is found, you will be given the option of
+registering the kernel module with DKMS, and using the DKMS
+infrastructure to build and install the kernel module. On most
+systems with DKMS, DKMS will take care of automatically rebuilding
+registered kernel modules when installing a different Linux
+kernel.</p>
+<p>Not all kernel configurations are supported by DKMS: for
+example, DKMS does not support kernels built with separate KBUILD
+source and output directories. If <code class=
+"filename">nvidia-installer</code> is unable to install the kernel
+module through DKMS, the installation will be aborted and no kernel
+module will be installed. If this happens, installation should be
+attempted again, without the DKMS option.</p>
+<p>Note that versions of <code class=
+"filename">nvidia-installer</code> shipped with drivers before
+release 304 do not interact with DKMS. If you choose to register
+the NVIDIA kernel module with DKMS, please ensure that the module
+is removed from the DKMS database before using a non-DKMS aware
+version of <code class="filename">nvidia-installer</code> to
+install an older driver; otherwise, module source files may be
+deleted without first unregistering the module, potentially leaving
+the DKMS database in an inconsistent state. Running <code class=
+"filename">nvidia-uninstall</code> before installing a driver using
+an older installer will invoke the correct <strong class=
+"userinput"><code>dkms remove</code></strong> command to clean up
+the installation.</p>
+</div>
+<div class="section" lang="en">
+<div class="titlepage">
+<div>
+<div>
+<h2 class="title" style="clear: both"><a name=
+"FeaturesOfTheIn257ba" id="FeaturesOfTheIn257ba"></a>Features of
+the Installer</h2>
+</div>
+</div>
+</div>
+<p>Without options, the <code class="filename">.run</code> file
+executes the installer after unpacking it. The installer can be run
+as a separate step in the process, or can be run at a later time to
+get updates, etc. Some of the more important commandline options of
+<code class="filename">nvidia-installer</code> are:</p>
+<div class="variablelist">
+<p class="title"><b><code class="filename">nvidia-installer</code>
+options</b></p>
+<dl>
+<dt><span class="term"><code class=
+"option">--uninstall</code></span></dt>
+<dd>
+<p>During installation, the installer will make backups of any
+conflicting files and record the installation of new files. The
+uninstall option undoes an install, restoring the system to its
+pre-install state.</p>
+</dd>
+<dt><span class="term"><code class=
+"option">--ui=none</code></span></dt>
+<dd>
+<p>The installer uses an ncurses-based user interface if it is able
+to locate the correct ncurses library. Otherwise, it will fall back
+to a simple commandline user interface. This option disables the
+use of the ncurses library.</p>
+</dd>
+</dl>
+</div>
+<p></p>
+</div>
+</div>
+<div class="navfooter">
+<hr>
+<table width="100%" summary="Navigation footer">
+<tr>
+<td width="40%" align="left"><a accesskey="p" href=
+"selectdriver.html">Prev</a>&nbsp;</td>
+<td width="20%" align="center"><a accesskey="u" href=
+"installationandconfiguration.html">Up</a></td>
+<td width="40%" align="right">&nbsp;<a accesskey="n" href=
+"installedcomponents.html">Next</a></td>
+</tr>
+<tr>
+<td width="40%" align="left" valign="top">
+Chapter&nbsp;3.&nbsp;Selecting and Downloading the NVIDIA Packages
+for Your System&nbsp;</td>
+<td width="20%" align="center"><a accesskey="h" href=
+"index.html">Home</a></td>
+<td width="40%" align="right" valign="top">
+&nbsp;Chapter&nbsp;5.&nbsp;Listing of Installed Components</td>
+</tr>
+</table>
+</div>
+</body>
+</html>
